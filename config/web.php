@@ -7,14 +7,20 @@ $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
+    'name' => 'Basic Project',
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
     ],
+    'modules' => [
+        'admin' => [
+            'class' => 'app\modules\admin\Module',
+        ],
+    ],
     'components' => [
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
-            'cookieValidationKey' => '',
+            'cookieValidationKey' => '19',
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
@@ -43,14 +49,20 @@ $config = [
             ],
         ],
         'db' => $db,
-        /*
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                'login' => 'site/login'
             ],
         ],
-        */
+        'view' => [
+            'theme' => [
+                'pathMap' => [
+                    '@app/modules/admin/views' => '@vendor/hail812/yii2-adminlte3/src/views'
+                ],
+            ],
+        ],
     ],
     'params' => $params,
 ];
