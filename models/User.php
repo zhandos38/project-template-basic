@@ -66,7 +66,7 @@ class User extends ActiveRecord implements IdentityInterface
             ['status', 'default', 'value' => self::STATUS_INACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE, self::STATUS_DELETED]],
 
-            ['email', 'unique', 'targetClass' => '\common\models\User', 'message' => 'Данный почтовый адрес уже используется.'],
+            ['email', 'unique', 'targetClass' => '\app\models\User', 'message' => 'Данный почтовый адрес уже используется.'],
         ];
     }
 
