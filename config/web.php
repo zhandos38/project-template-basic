@@ -12,6 +12,7 @@ $config = [
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
+        '@static' => '@app/web/static'
     ],
     'modules' => [
         'admin' => [
