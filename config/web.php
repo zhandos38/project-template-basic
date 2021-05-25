@@ -8,6 +8,7 @@ $config = [
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'name' => 'Basic Project',
+    'language' => 'ru',
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
@@ -54,13 +55,6 @@ $config = [
             'showScriptName' => false,
             'rules' => [
                 'login' => 'site/login'
-            ],
-        ],
-        'view' => [
-            'theme' => [
-                'pathMap' => [
-                    '@app/modules/admin/views' => '@vendor/hail812/yii2-adminlte3/src/views'
-                ],
             ],
         ],
     ],
