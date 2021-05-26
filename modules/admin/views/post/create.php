@@ -1,17 +1,13 @@
 <?php
 
-use yii\helpers\Html;
-
 /* @var $this yii\web\View */
-/* @var $model common\models\Post */
+/* @var $model app\models\Post */
 
 $this->title = 'Добавить пост';
-$this->params['breadcrumbs'][] = ['label' => 'Posts', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Panels', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="post-create">
-
-    <h1><?= Html::encode($this->title) ?></h1>
+<div class="panel-create">
 
     <?= $this->render('_form', [
         'model' => $model,

@@ -37,7 +37,7 @@
                 'items' => [
                     ['label' => 'Меню', 'header' => true],
                     ['label' => 'Пользователи', 'icon' => 'user', 'url' => ['user/index']],
-                    ['label' => 'Посты', 'icon' => 'th'],
+                    ['label' => 'Посты', 'icon' => 'th', 'url' => ['post/index']],
                     ['label' => 'Gii',  'icon' => 'file-code', 'url' => ['/gii'], 'target' => '_blank'],
                     ['label' => 'Debug', 'icon' => 'bug', 'url' => ['/debug'], 'target' => '_blank'],
                 ],

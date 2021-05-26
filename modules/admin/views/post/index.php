@@ -1,30 +1,18 @@
 <?php
-
-use yii\helpers\Html;
+use app\models\Post;
+use kartik\daterange\DateRangePicker;
 use yii\grid\GridView;
-use yii\widgets\Pjax;
-use common\models\Post;
 
 /* @var $this yii\web\View */
-/* @var $searchModel backend\models\search\PostSearch */
+/* @var $searchModel app\modules\admin\models\PostSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
-/* @var $model \common\models\Post */
 
 $this->title = 'Посты';
 $this->params['breadcrumbs'][] = $this->title;
-
-$imgPath = Yii::$app->params['staticDomain'] . 'posts/';
 ?>
 <div class="post-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a('Добавить пост', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
-    <?php Pjax::begin(); ?>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+    <a class="btn btn-success" href="<?= \yii\helpers\Url::to(['post/create']) ?>">Добавить</a>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -32,45 +20,28 @@ $imgPath = Yii::$app->params['staticDomain'] . 'posts/';
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            [
-                'attribute' => 'image',
-                'value' => function(Post $model) use ($imgPath) {
-                    $imgPath .= $model->image;
-                    return "<img src='$imgPath' width='250'>";
-                },
-                'format' => 'html'
-            ],
             'title',
-            [
-                'attribute' => 'content',
-                'format' => 'text',
-            ],
-            'views',
-            [
-                'attribute' => 'user_id',
-                'value' => function(Post $model) {
-                    return $model->user->full_name;
-                }
-            ],
-            [
-                'attribute' => 'type_id',
-                'value' => function(Post $model) {
-                    return $model->getTypeLabel();
-                }
-            ],
             [
                 'attribute' => 'created_at',
                 'value' => function(Post $model) {
                     return date('d-m-Y H:i', $model->created_at);
-                }
+                },
+                'filter' => DateRangePicker::widget([
+                    'model' => $searchModel,
+                    'attribute' => 'createTimeRange',
+                    'convertFormat' => true,
+                    'pjaxContainerId' => 'crud-datatable-pjax',
+                    'pluginOptions' => [
+                        'locale' => [
+                            'format'=>'Y-m-d'
+                        ],
+                        'convertFormat'=>true
+                    ]
+                ]),
             ],
-
-            //'updated_at',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],
-    ]); ?>
-
-    <?php Pjax::end(); ?>
+    ]) ?>
 
 </div>

@@ -2,52 +2,29 @@
 
 namespace app\models;
 
-use kartik\daterange\DateRangeBehavior;
 use Yii;
-use yii\helpers\ArrayHelper;
+use yii\behaviors\TimestampBehavior;
+use yii\imagine\Image;
 
 /**
  * This is the model class for table "post".
  *
  * @property int $id
  * @property string $title
- * @property string $content
- * @property int $views
- * @property int $user_id
- * @property int $type_id
- * @property string $image
- * @property int $created_at
- * @property int $updated_at
- *
- * @property User $user
- * @property string $author [varchar(255)]
- * @property string $topic [varchar(255)]
+ * @property string|null $img
+ * @property string|null $content
+ * @property int|null $created_at
+ * @property int|null $updated_at
  */
 class Post extends \yii\db\ActiveRecord
 {
-    const TYPE_NEWS = 0;
-    const TYPE_CLINIC_STATE = 1;
-    const TYPE_EXPERT_OPINION = 2;
-    const TYPE_RECOMMENDATION = 3;
-    const TYPE_PUBLICATION = 4;
-    const TYPE_VIDEO_BROADCAST = 5;
-
-    public $createTimeRange;
-    public $createTimeStart;
-    public $createTimeEnd;
     public $imageFile;
 
     public function behaviors()
     {
         return [
             'timestamp' => [
-                'class' => 'yii\behaviors\TimestampBehavior',
-            ],
-            [
-                'class' => DateRangeBehavior::className(),
-                'attribute' => 'createTimeRange',
-                'dateStartAttribute' => 'createTimeStart',
-                'dateEndAttribute' => 'createTimeEnd',
+                'class' => TimestampBehavior::className()
             ]
         ];
     }
@@ -66,13 +43,12 @@ class Post extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['content', 'image', 'author', 'topic'], 'string'],
-            [['views', 'user_id', 'type_id', 'created_at', 'updated_at'], 'integer'],
-            [['title'], 'string', 'max' => 255],
             [['title'], 'required'],
-            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
-            [['createTimeRange'], 'match', 'pattern' => '/^.+\s\-\s.+$/'],
-            [['imageFile'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg']
+            [['content'], 'string'],
+            [['created_at', 'updated_at'], 'integer'],
+            [['title', 'img'], 'string', 'max' => 255],
+
+            [['imageFile'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg'],
         ];
     }
 
@@ -83,69 +59,53 @@ class Post extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'topic' => 'Тема (Только для эксп. мнение)',
-            'title' => 'Название',
-            'content' => 'Описание',
-            'views' => 'Просмотры',
-            'user_id' => 'Автор',
-            'type_id' => 'Тип',
-            'image' => 'Рисунок',
-            'author' => 'Автор',
-            'created_at' => 'Дата добавление',
-            'updated_at' => 'Дата обновление',
-            'imageFile' => 'Рисунок'
+            'title' => 'Наименование',
+            'img' => 'Рисунок',
+            'imageFile' => 'Рисунок',
+            'content' => 'Контент',
+            'created_at' => 'Время добавления',
+            'updated_at' => 'Время обновления',
         ];
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getUser()
+    public function getDate()
     {
-        return $this->hasOne(User::className(), ['id' => 'user_id']);
+        return date('Y.m.d', $this->created_at);
     }
 
-    /**
-     * @return array
-     */
-    public function getTypeLabel()
+    public function getShortDescription()
     {
-        return ArrayHelper::getValue(static::getTypes(), $this->type_id);
+        if (strlen($this->content) >= (int)255) {
+            return str_replace("<br>", "", mb_strcut($this->content, 0, 255)) . '...';
+        }
+
+        return false;
     }
 
-    /**
-     * @return array
-     */
-    public static function getTypes()
+    public function getImage()
     {
-        return [
-            self::TYPE_NEWS => 'Новости',
-            self::TYPE_CLINIC_STATE => 'Клинически случай',
-            self::TYPE_EXPERT_OPINION => 'Экспертное мнение',
-            self::TYPE_RECOMMENDATION => 'Рекомендации',
-            self::TYPE_PUBLICATION => 'Публикации',
-            self::TYPE_VIDEO_BROADCAST => 'Видеотрансляции и архив'
-        ];
+        return Yii::$app->params['staticDomain'] . '/post/' . $this->img;
     }
 
     public function upload()
-    {   $imgPath = \Yii::getAlias('@static');
-
-        if ($this->imageFile == null)
+    {
+        if ($this->imageFile === null) {
             return true;
+        }
+
+        $folderPath = Yii::getAlias('@static') . '/post';
+
+        if (!file_exists($folderPath) && !mkdir($folderPath, 0777, true) && !is_dir($folderPath)) {
+            throw new \RuntimeException(sprintf('Directory "%s" was not created', $folderPath));
+        }
+
+        $imgPath = $folderPath . '/' . $this->imageFile->baseName . '.' . $this->imageFile->extension;
 
         if ($this->validate()) {
-            $this->imageFile->saveAs($imgPath . '/web/posts/' . $this->imageFile->baseName . '.' . $this->imageFile->extension);
-            return true;
-        } else {
-            return false;
+            $this->imageFile->saveAs($imgPath);
+            return Image::resize($imgPath,500, 500, true)->save();
         }
-    }
 
-    public function beforeSave($insert)
-    {
-        if ($this->imageFile)
-            $this->image = $this->imageFile->baseName . '.' . $this->imageFile->extension;
-        return true;
+        return false;
     }
 }
