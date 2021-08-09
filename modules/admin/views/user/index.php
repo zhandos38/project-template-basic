@@ -13,34 +13,38 @@ use yii\grid\GridView;
 $this->title = 'Пользователи';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="user-index">
+<div class="user-index card">
 
-    <a class="btn btn-success" href="<?= \yii\helpers\Url::to(['user/create']) ?>">Добавить</a>
+    <div class="card-header">
+        <a class="btn btn-success" href="<?= \yii\helpers\Url::to(['user/create']) ?>">Добавить</a>
+    </div>
 
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+    <div class="card-body">
+        <?= GridView::widget([
+            'dataProvider' => $dataProvider,
+            'filterModel' => $searchModel,
+            'columns' => [
+                ['class' => 'yii\grid\SerialColumn'],
 
-            'username',
-            'email:email',
-            'role',
-            [
-                'attribute' => 'status',
-                'value' => function(User $model) {
-                    return $model->getStatusLabel();
-                }
+                'username',
+                'email:email',
+                'role',
+                [
+                    'attribute' => 'status',
+                    'value' => function(User $model) {
+                        return $model->getStatusLabel();
+                    }
+                ],
+                [
+                    'attribute' => 'created_at',
+                    'value' => function(User $model) {
+                        return date('m.d.Y H:i', $model->created_at);
+                    }
+                ],
+
+                ['class' => 'yii\grid\ActionColumn'],
             ],
-            [
-                'attribute' => 'created_at',
-                'value' => function(User $model) {
-                    return date('m.d.Y H:i', $model->created_at);
-                }
-            ],
-
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]); ?>
+        ]); ?>
+    </div>
 
 </div>

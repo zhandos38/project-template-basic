@@ -4,6 +4,7 @@ use app\models\User;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
@@ -11,8 +12,13 @@ use yii\widgets\ActiveForm;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="user-form">
+<div class="user-form card">
 
+    <div class="card-header">
+        <a class="btn btn-danger" href="<?= Url::to(['user/index']) ?>">Назад</a>
+    </div>
+
+    <div class="card-body">
         <?php $form = ActiveForm::begin(); ?>
 
         <?= $form->field($model, 'username')->textInput() ?>
@@ -30,5 +36,6 @@ use yii\widgets\ActiveForm;
         </div>
 
         <?php ActiveForm::end(); ?>
+    </div>
 
 </div>

@@ -3,12 +3,11 @@
 /* @var $this \yii\web\View */
 /* @var $content string */
 
-use app\widgets\Alert;
-use yii\helpers\Html;
-use yii\bootstrap\Nav;
-use yii\bootstrap\NavBar;
-use yii\widgets\Breadcrumbs;
+
 use app\assets\AppAsset;
+use yii\bootstrap4\Alert;
+use yii\helpers\Html;
+use yii\widgets\Breadcrumbs;
 
 AppAsset::register($this);
 ?>
